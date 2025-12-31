@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: n8n-service
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    disk:
+      name: n8n-data
+      mountPath: /home/node/.n8n
+      sizeGB: 1
+    envVars:
+      # Configuración general de n8n
+      - key: N8N_PORT
+        value: 5678
+      - key: N8N_HOST
+        value: 0.0.0.0
+      - key: WEBHOOK_URL
+        value: https://n8n-service.onrender.com
+      - key: GENERIC_TIMEZONE
+        value: America/Guayaquil
+      - key: TZ
+        value: America/Guayaquil
+      - key: N8N_RUNNERS_ENABLED
+        value: "true"
+      - key: N8N_ENCRYPTION_KEY
+        sync: false
+      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+        value: "false"
+      - key: N8N_BLOCK_ENV_ACCESS_IN_NODE
+        value: "false"
+      - key: N8N_GIT_NODE_DISABLE_BARE_REPOS
+        value: "true"
+
+      # Configuración de la base de datos PostgreSQL (Supabase)
+      - key: DB_TYPE
+        value: postgresdb
+      - key: DB_POSTGRESDB_HOST
+        value: aws-1-us-east-1.pooler.supabase.com
+      - key: DB_POSTGRESDB_PORT
+        value: "6543"
+      - key: DB_POSTGRESDB_DATABASE
+        value: postgres
+      - key: DB_POSTGRESDB_USER
+        value: postgres.jovwozktuvlalbodxqzw
+      - key: DB_POSTGRESDB_PASSWORD
+        value: n8nsupabase
+      - key: DB_POSTGRESDB_SCHEMA
+        value: public

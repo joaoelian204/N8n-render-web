@@ -1,0 +1,27 @@
+name: Keep n8n & Supabase Alive
+
+on:
+  schedule:
+    # Se ejecuta cada 12 minutos (Render se duerme a los 15)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping_services:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. DESPERTAR A RENDER (n8n)
+      - name: Ping n8n (Render)
+        run: |
+          # Consulta la salud de n8n para reiniciar el contador de Render
+          curl -I "${{ secrets.RENDER_URL }}/healthz"
+
+      # 2. DESPERTAR A SUPABASE (Base de datos de n8n)
+      - name: Ping Supabase DB
+        run: |
+          # Consultamos la tabla 'migrations' que SI existe en tu esquema de n8n.
+          # Solo pedimos 1 fila para no gastar datos, solo despertar la base.
+          
+          curl -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/migrations?select=*&limit=1" \
+          -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
