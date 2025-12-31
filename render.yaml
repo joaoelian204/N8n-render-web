@@ -16,7 +16,7 @@ services:
       - key: N8N_HOST
         value: 0.0.0.0
       - key: WEBHOOK_URL
-        value: https://n8n-service.onrender.com
+        value: https://n8n-render-web.onrender.com
       - key: GENERIC_TIMEZONE
         value: America/Guayaquil
       - key: TZ
@@ -47,3 +47,15 @@ services:
         value: n8nsupabase
       - key: DB_POSTGRESDB_SCHEMA
         value: public
+      
+      # Configuración de conexión para evitar timeouts
+      - key: DB_POSTGRESDB_CONNECTION_TIMEOUT
+        value: "60000"
+      - key: DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED
+        value: "false"
+      - key: DB_POSTGRESDB_SSL_ENABLED
+        value: "true"
+      
+      # Desactivar Python runner para evitar errores
+      - key: N8N_RUNNERS_DISABLED_RUNNERS
+        value: "python"
