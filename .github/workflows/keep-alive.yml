@@ -1,27 +1,20 @@
-name: Keep n8n & Supabase Alive
+name: Keep Supabase Alive
 
 on:
   schedule:
-    # Se ejecuta cada 12 minutos (Render se duerme a los 15)
+    # Se ejecuta cada 5 minutos para mantener la base de datos activa
     - cron: '*/5 * * * *'
-  workflow_dispatch:
+  workflow_dispatch: # Permite ejecutarlo manualmente desde GitHub
 
 jobs:
-  ping_services:
+  ping_database:
     runs-on: ubuntu-latest
     steps:
-      # 1. DESPERTAR A RENDER (n8n)
-      - name: Ping n8n (Render)
+      - name: Ping Supabase API
         run: |
-          # Consulta la salud de n8n para reiniciar el contador de Render
-          curl -I "${{ secrets.RENDER_URL }}/healthz"
-
-      # 2. DESPERTAR A SUPABASE (Base de datos de n8n)
-      - name: Ping Supabase DB
-        run: |
-          # Consultamos la tabla 'migrations' que SI existe en tu esquema de n8n.
-          # Solo pedimos 1 fila para no gastar datos, solo despertar la base.
-          
-          curl -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/migrations?select=*&limit=1" \
+          # Realizamos una consulta simple a la raíz de la API de Supabase.
+          # Esto genera la actividad necesaria en la base de datos sin requerir una tabla específica.
+          curl -f -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/" \
           -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}" \
+          -H "User-Agent: GitHubAction-KeepAlive"
